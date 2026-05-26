@@ -87,3 +87,4 @@ Backend routes enforce role permissions with FastAPI dependencies. The frontend 
 ## Notes
 
 Infrastructure code is intentionally omitted. The Compose setup is for local development only; the app is shaped so the frontend can later run on EC2 and the backend on ECS Fargate without changing the application architecture.
+# CI trigger
