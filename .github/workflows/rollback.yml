@@ -1,0 +1,38 @@
+name: InnGrid Rollback Workflow
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rollback-production:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Simulate Failed Deployment Detection
+        run: |
+          echo "Production deployment unhealthy."
+          echo "Elevated API latency detected."
+          echo "5xx errors increasing."
+
+      - name: Simulate Rollback Initiation
+        run: |
+          echo "Rolling back to previous stable release..."
+          echo "Restoring previous ECS task definition..."
+          echo "Re-routing traffic to stable environment..."
+
+      - name: Simulate Rollback Validation
+        run: |
+          echo "Running rollback health checks..."
+          echo "Frontend healthy."
+          echo "Backend healthy."
+          echo "Database connectivity healthy."
+          echo "Rollback completed successfully."
