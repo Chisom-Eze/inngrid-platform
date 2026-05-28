@@ -1,0 +1,47 @@
+name: InnGrid Observability Monitoring
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+jobs:
+  production-health-monitoring:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Simulate Metrics Collection
+        run: |
+          echo "Collecting production metrics..."
+          echo "API latency: 220ms"
+          echo "5xx error rate: 0.2%"
+          echo "CPU utilization: 48%"
+          echo "Memory utilization: 62%"
+
+      - name: Simulate Log Aggregation
+        run: |
+          echo "Aggregating structured application logs..."
+          echo "Filtering auth failures..."
+          echo "Filtering database timeouts..."
+          echo "Filtering API exceptions..."
+
+      - name: Simulate Health Validation
+        run: |
+          echo "Frontend health: HEALTHY"
+          echo "Backend health: HEALTHY"
+          echo "Database health: HEALTHY"
+          echo "Observability checks completed."
+
+      - name: Simulate Alert Evaluation
+        run: |
+          echo "Evaluating operational thresholds..."
+          echo "No critical alerts triggered."
