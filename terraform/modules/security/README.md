@@ -108,3 +108,15 @@ Egress:
 Rationale:
 
 Frontend services should only accept requests routed through the Application Load Balancer.
+
+```
+Internet
+    ↓
+ALB
+    ↓
+Frontend
+    ↓
+Backend
+    ↓
+Database
+```
