@@ -89,3 +89,22 @@ From:
 ECS Security Group
 ```
 Only.
+
+### Frontend Security Group
+
+Purpose:
+
+Protect frontend EC2 instances.
+
+Ingress:
+
+- TCP 3000
+- Source: ALB Security Group
+
+Egress:
+
+- All outbound traffic
+
+Rationale:
+
+Frontend services should only accept requests routed through the Application Load Balancer.
