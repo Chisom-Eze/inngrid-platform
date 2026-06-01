@@ -1,8 +1,8 @@
-### Purpose
+## Purpose
 
 Provide networking foundation for InnGrid.
 
-### CIDR Strategy
+## CIDR Strategy
 
 ```
 VPC:                 10.0.0.0/16
@@ -14,21 +14,21 @@ Private Subnet A:    10.0.10.0/24
 Private Subnet B:    10.0.20.0/24
 ```
 
-### Availability Strategy
+## Availability Strategy
 
-# Multi-AZ deployment
+### Multi-AZ deployment
 
 ```
 AZ-A
 AZ-B
 ```
 
-# Purpose:
+### Purpose:
 
 - High Availability
 - Fault Tolerance
 
-### Security Philosophy
+## Security Philosophy
 
 Only ALB exposed publicly.
 
@@ -40,11 +40,11 @@ Protected resources:
 
 remain in private subnets.
 
-### Cost Considerations
+## Cost Considerations
 
 Use NAT Gateway initially.
 
-# Future optimization:
+## Future optimization:
 
 - VPC Endpoints
 - Reduced NAT traffic
