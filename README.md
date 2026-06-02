@@ -30,7 +30,7 @@ Seeded demo login:
 
 ## Project Structure
 
-```text
+```
 backend/
   alembic/                 Database migrations
   app/

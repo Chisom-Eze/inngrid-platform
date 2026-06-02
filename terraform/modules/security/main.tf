@@ -59,3 +59,57 @@ resource "aws_vpc_security_group_egress_rule" "frontend_outbound" {
   cidr_ipv4   = "0.0.0.0/0"
   ip_protocol = "-1"
 }
+
+resource "aws_security_group" "backend" {
+  name        = "${var.project_name}-${var.environment}-backend-sg"
+  description = "Security group for backend ECS services"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-backend-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "backend_from_frontend" {
+  security_group_id = aws_security_group.backend.id
+
+  referenced_security_group_id = aws_security_group.frontend.id
+
+  from_port   = 8080
+  to_port     = 8080
+  ip_protocol = "tcp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "backend_outbound" {
+  security_group_id = aws_security_group.backend.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
+
+resource "aws_security_group" "database" {
+  name        = "${var.project_name}-${var.environment}-database-sg"
+  description = "Security group for PostgreSQL"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-database-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "database_from_backend" {
+  security_group_id = aws_security_group.database.id
+
+  referenced_security_group_id = aws_security_group.backend.id
+
+  from_port   = 5432
+  to_port     = 5432
+  ip_protocol = "tcp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "database_outbound" {
+  security_group_id = aws_security_group.database.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
