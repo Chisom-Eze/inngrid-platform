@@ -7,11 +7,11 @@ resource "aws_ecs_cluster" "this" {
   }
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_cloudwatch_log_group" "backend" {
@@ -20,11 +20,11 @@ resource "aws_cloudwatch_log_group" "backend" {
   retention_in_days = 7
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_ecs_task_definition" "backend" {
@@ -68,11 +68,11 @@ resource "aws_ecs_task_definition" "backend" {
   ])
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_ecs_service" "backend" {
@@ -105,10 +105,10 @@ resource "aws_ecs_service" "backend" {
   }
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 

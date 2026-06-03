@@ -3,23 +3,23 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-igw"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-igw"
+    }
+  )
 }
 
 resource "aws_subnet" "public_a" {
@@ -30,11 +30,11 @@ resource "aws_subnet" "public_a" {
   availability_zone = "${var.region}a"
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-public-a"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-public-a"
+    }
+  )
 }
 
 resource "aws_subnet" "public_b" {
@@ -45,11 +45,11 @@ resource "aws_subnet" "public_b" {
   availability_zone = "${var.region}b"
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-public-b"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-public-b"
+    }
+  )
 }
 
 resource "aws_subnet" "private_a" {
@@ -59,11 +59,11 @@ resource "aws_subnet" "private_a" {
   availability_zone = "${var.region}a"
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-private-a"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-private-a"
+    }
+  )
 }
 
 resource "aws_subnet" "private_b" {
@@ -73,11 +73,11 @@ resource "aws_subnet" "private_b" {
   availability_zone = "${var.region}b"
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-private-b"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-private-b"
+    }
+  )
 }
 
 resource "aws_route_table" "public" {
@@ -89,10 +89,11 @@ resource "aws_route_table" "public" {
   }
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-public-rt"
-  }
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-public-rt"
+    }
+  )
 }
 
 resource "aws_route_table_association" "public_a" {
@@ -100,11 +101,11 @@ resource "aws_route_table_association" "public_a" {
   route_table_id = aws_route_table.public.id
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_route_table_association" "public_b" {
@@ -112,9 +113,9 @@ resource "aws_route_table_association" "public_b" {
   route_table_id = aws_route_table.public.id
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }

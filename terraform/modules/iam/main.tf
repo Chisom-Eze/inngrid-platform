@@ -16,11 +16,11 @@ resource "aws_iam_role" "ecs_execution_role" {
   })
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
@@ -29,11 +29,11 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_iam_policy" "secrets_manager_read" {
@@ -54,11 +54,11 @@ resource "aws_iam_policy" "secrets_manager_read" {
   })
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_secrets" {
@@ -66,11 +66,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_secrets" {
   policy_arn = aws_iam_policy.secrets_manager_read.arn
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_iam_policy" "s3_access" {
@@ -92,11 +92,11 @@ resource "aws_iam_policy" "s3_access" {
   })
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_s3" {
@@ -104,9 +104,9 @@ resource "aws_iam_role_policy_attachment" "ecs_task_s3" {
   policy_arn = aws_iam_policy.s3_access.arn
 
   tags = merge(
-  var.tags,
-  {
-    Name = "${var.project_name}-${var.environment}-cluster"
-  }
-)
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-cluster"
+    }
+  )
 }
