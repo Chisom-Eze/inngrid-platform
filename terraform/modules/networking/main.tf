@@ -3,19 +3,23 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-vpc"
-    Environment = var.environment
+tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
   }
+)
 }
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-igw"
-    Environment = var.environment
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-igw"
   }
+)
 }
 
 resource "aws_subnet" "public_a" {
@@ -25,10 +29,12 @@ resource "aws_subnet" "public_a" {
 
   availability_zone = "${var.region}a"
 
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-public-a"
-    Environment = var.environment
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-public-a"
   }
+)
 }
 
 resource "aws_subnet" "public_b" {
@@ -38,10 +44,12 @@ resource "aws_subnet" "public_b" {
 
   availability_zone = "${var.region}b"
 
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-public-b"
-    Environment = var.environment
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-public-b"
   }
+)
 }
 
 resource "aws_subnet" "private_a" {
@@ -50,10 +58,12 @@ resource "aws_subnet" "private_a" {
 
   availability_zone = "${var.region}a"
 
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-private-a"
-    Environment = var.environment
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-private-a"
   }
+)
 }
 
 resource "aws_subnet" "private_b" {
@@ -62,10 +72,12 @@ resource "aws_subnet" "private_b" {
 
   availability_zone = "${var.region}b"
 
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-private-b"
-    Environment = var.environment
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-private-b"
   }
+)
 }
 
 resource "aws_route_table" "public" {
@@ -76,18 +88,33 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.main.id
   }
 
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-public-rt"
-    Environment = var.environment
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-public-rt"
   }
 }
 
 resource "aws_route_table_association" "public_a" {
   subnet_id      = aws_subnet.public_a.id
   route_table_id = aws_route_table.public.id
+
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
+  }
+)
 }
 
 resource "aws_route_table_association" "public_b" {
   subnet_id      = aws_subnet.public_b.id
   route_table_id = aws_route_table.public.id
+
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
+  }
+)
 }

@@ -29,3 +29,8 @@ variable "backend_security_group_id" {
 variable "vpc_id" {
   type = string
 }
+
+variable "tags" {
+  description = "Common tags applied to all resources"
+  type        = map(string)
+}

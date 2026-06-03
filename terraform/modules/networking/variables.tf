@@ -32,3 +32,8 @@ variable "private_subnet_b_cidr" {
   description = "Private subnet B CIDR"
   type        = string
 }
+
+variable "tags" {
+  description = "Common tags applied to all resources"
+  type        = map(string)
+}

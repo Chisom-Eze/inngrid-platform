@@ -9,9 +9,12 @@ resource "aws_lb" "this" {
 
   subnets = var.public_subnet_ids
 
-  tags = {
-    Name = "${var.project_name}-${var.environment}-alb"
+tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
   }
+)
 }
 
 resource "aws_lb_target_group" "frontend" {
@@ -24,6 +27,13 @@ resource "aws_lb_target_group" "frontend" {
   vpc_id = var.vpc_id
 
   target_type = "instance"
+
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
+  }
+)
 }
 
 resource "aws_lb_target_group" "backend" {
@@ -35,6 +45,13 @@ resource "aws_lb_target_group" "backend" {
   target_type = "ip"
 
   vpc_id = var.vpc_id
+
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
+  }
+)
 }
 
 resource "aws_lb_listener" "http" {
@@ -49,6 +66,13 @@ resource "aws_lb_listener" "http" {
 
     target_group_arn = aws_lb_target_group.frontend.arn
   }
+
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
+  }
+)
 }
 
 resource "aws_lb_listener_rule" "backend_api" {
@@ -67,4 +91,11 @@ resource "aws_lb_listener_rule" "backend_api" {
       values = ["/api/*"]
     }
   }
+
+  tags = merge(
+  var.tags,
+  {
+    Name = "${var.project_name}-${var.environment}-cluster"
+  }
+)
 }
