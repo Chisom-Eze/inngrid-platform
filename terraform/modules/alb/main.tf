@@ -20,7 +20,7 @@ resource "aws_lb" "this" {
 resource "aws_lb_target_group" "frontend" {
   name = "${var.project_name}-${var.environment}-frontend"
 
-  port = 3000
+  port = 80
 
   protocol = "HTTP"
 
