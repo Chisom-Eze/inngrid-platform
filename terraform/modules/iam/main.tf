@@ -110,3 +110,9 @@ resource "aws_iam_role_policy_attachment" "ecs_task_s3" {
     }
   )
 }
+
+resource "aws_iam_role_policy_attachment" "ssm" {
+  role = aws_iam_role.ec2.name
+
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}

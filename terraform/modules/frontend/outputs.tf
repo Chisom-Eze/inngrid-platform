@@ -1,11 +1,7 @@
-output "frontend_instance_id" {
-  value = aws_instance.frontend.id
+output "frontend_asg_name" {
+  value = aws_autoscaling_group.frontend.name
 }
 
-output "frontend_public_ip" {
-  value = aws_instance.frontend.public_ip
-}
-
-output "frontend_private_ip" {
-  value = aws_instance.frontend.private_ip
+output "frontend_launch_template_id" {
+  value = aws_launch_template.frontend.id
 }

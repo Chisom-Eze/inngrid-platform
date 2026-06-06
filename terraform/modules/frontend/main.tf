@@ -27,27 +27,33 @@ locals {
   )
 }
 
-resource "aws_instance" "frontend" {
-  ami = data.aws_ami.ubuntu.id
+resource "aws_launch_template" "frontend" {
+  name_prefix = "${var.project_name}-${var.environment}-frontend-"
+
+  image_id = data.aws_ami.ubuntu.id
 
   instance_type = var.instance_type
 
-  subnet_id = var.public_subnet_id
+  iam_instance_profile {
+    name = var.instance_profile_name
+  }
 
   vpc_security_group_ids = [
     var.frontend_security_group_id
   ]
 
-  iam_instance_profile = var.instance_profile_name
+  user_data = base64encode(local.user_data)
 
-  user_data = local.user_data
+  tag_specifications {
+    resource_type = "instance"
 
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-frontend"
-    }
-  )
+    tags = merge(
+      var.tags,
+      {
+        Name = "${var.project_name}-${var.environment}-frontend"
+      }
+    )
+  }
 }
 
 resource "aws_lb_target_group_attachment" "frontend" {
