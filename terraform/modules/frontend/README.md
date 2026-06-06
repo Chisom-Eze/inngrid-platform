@@ -38,3 +38,12 @@ Frontend EC2
 - Launch Templates
 - CloudWatch Agent
 - SSM Session Manager
+
+## Production Enhancements
+
+- Launch Template
+- Auto Scaling Group
+- Multi-AZ Placement
+- Private Subnet Deployment
+- SSM Ready
+- CloudWatch Ready

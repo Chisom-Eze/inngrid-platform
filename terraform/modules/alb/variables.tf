@@ -34,3 +34,7 @@ variable "tags" {
   description = "Common tags applied to all resources"
   type        = map(string)
 }
+
+variable "certificate_arn" {
+  type = string
+}
