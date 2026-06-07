@@ -23,7 +23,16 @@ Security
 
 Future Enhancements
 
-- ACM Certificate
-- HTTPS Listener (443)
-- HTTP to HTTPS Redirect
 - WAF Integration
+
+Observability
+
+- ALB Access Logs
+- CloudWatch Alarms
+- Health Checks
+
+Monitoring
+
+- HTTP 5XX Detection
+- Request Visibility
+- Traffic Analysis
