@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "backend" {
     {
       name = "backend"
 
-      image = "nginx:latest"
+      image = "nginx:1.28"
 
       essential = true
 
@@ -84,6 +84,10 @@ resource "aws_ecs_service" "backend" {
 
   desired_count = 2
 
+  deployment_minimum_healthy_percent = 100
+
+  deployment_maximum_percent = 200
+
   launch_type = "FARGATE"
 
   network_configuration {
@@ -104,6 +108,11 @@ resource "aws_ecs_service" "backend" {
     container_port = 8000
   }
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   tags = merge(
     var.tags,
     {
@@ -112,3 +121,77 @@ resource "aws_ecs_service" "backend" {
   )
 }
 
+resource "aws_appautoscaling_target" "ecs" {
+  max_capacity = 4
+  min_capacity = 2
+
+  resource_id = "service/${aws_ecs_cluster.this.name}/${aws_ecs_service.backend.name}"
+
+  scalable_dimension = "ecs:service:DesiredCount"
+
+  service_namespace = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "memory" {
+  name = "${var.project_name}-${var.environment}-ecs-memory"
+
+  policy_type = "TargetTrackingScaling"
+
+  resource_id = aws_appautoscaling_target.ecs.resource_id
+
+  scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
+
+  service_namespace = aws_appautoscaling_target.ecs.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
+
+    target_value = 75
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "ecs_cpu_high" {
+  alarm_name = "${var.project_name}-${var.environment}-ecs-cpu-high"
+
+  comparison_operator = "GreaterThanThreshold"
+
+  evaluation_periods = 2
+
+  metric_name = "CPUUtilization"
+
+  namespace = "AWS/ECS"
+
+  period = 300
+
+  statistic = "Average"
+
+  threshold = 80
+
+  dimensions = {
+    ClusterName = aws_ecs_cluster.this.name
+    ServiceName = aws_ecs_service.backend.name
+  }
+}
+
+resource "aws_appautoscaling_policy" "cpu" {
+  name = "${var.project_name}-${var.environment}-ecs-cpu"
+
+  policy_type = "TargetTrackingScaling"
+
+  resource_id = aws_appautoscaling_target.ecs.resource_id
+
+  scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
+
+  service_namespace = aws_appautoscaling_target.ecs.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+
+    target_value = 60
+  }
+}
