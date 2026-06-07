@@ -26,6 +26,16 @@ resource "aws_db_instance" "this" {
 
   manage_master_user_password = true
 
+  storage_encrypted = true
+
+  backup_retention_period = 7
+
+  performance_insights_enabled = true
+
+  monitoring_interval = 60
+
+  monitoring_role_arn = aws_iam_role.rds_monitoring.arn
+
   publicly_accessible = false
 
   skip_final_snapshot = false
