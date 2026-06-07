@@ -64,3 +64,12 @@ resource "aws_lb_target_group_attachment" "frontend" {
   port = 80
 }
 
+resource "aws_cloudwatch_log_group" "frontend_nginx_access" {
+  name              = "/inngrid/frontend/nginx/access"
+  retention_in_days = 7
+}
+
+resource "aws_cloudwatch_log_group" "frontend_nginx_error" {
+  name              = "/inngrid/frontend/nginx/error"
+  retention_in_days = 7
+}
