@@ -175,7 +175,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_high" {
     ServiceName = aws_ecs_service.backend.name
   }
 
-    tags = merge(
+  tags = merge(
     var.tags,
     {
       Name = "${var.project_name}-${var.environment}-cluster"
@@ -202,7 +202,7 @@ resource "aws_appautoscaling_policy" "cpu" {
     target_value = 60
   }
 
-    tags = merge(
+  tags = merge(
     var.tags,
     {
       Name = "${var.project_name}-${var.environment}-cluster"
