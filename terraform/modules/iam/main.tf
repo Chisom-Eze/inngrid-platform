@@ -18,7 +18,7 @@ resource "aws_iam_role" "ecs_execution_role" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.environment}-cluster"
+      Name = "${var.project_name}-${var.environment}-ecs-execution-role"
     }
   )
 }
@@ -27,13 +27,6 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   role = aws_iam_role.ecs_execution_role.name
 
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-cluster"
-    }
-  )
 }
 
 resource "aws_iam_policy" "secrets_manager_read" {
@@ -56,21 +49,14 @@ resource "aws_iam_policy" "secrets_manager_read" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.environment}-cluster"
+      Name = "${var.project_name}-${var.environment}-secrets-read"
     }
   )
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_secrets" {
-  role       = aws_iam_role.ecs_execution_role.name
+  role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.secrets_manager_read.arn
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-cluster"
-    }
-  )
 }
 
 resource "aws_iam_policy" "s3_access" {
@@ -94,21 +80,14 @@ resource "aws_iam_policy" "s3_access" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.environment}-cluster"
+      Name = "${var.project_name}-${var.environment}-s3-access"
     }
   )
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_s3" {
-  role       = aws_iam_role.ecs_execution_role.name
+  role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.s3_access.arn
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-cluster"
-    }
-  )
 }
 
 
@@ -146,7 +125,7 @@ resource "aws_iam_role" "rds_monitoring" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.environment}-cluster"
+      Name = "${var.project_name}-${var.environment}-rds-monitoring"
     }
   )
 }
@@ -182,4 +161,37 @@ resource "aws_iam_role" "ecs_task_role" {
       Name = "${var.project_name}-${var.environment}-ecs-task-role"
     }
   )
+}
+
+resource "aws_iam_role" "ec2" {
+  name = "${var.project_name}-${var.environment}-ec2-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-ec2-role"
+    }
+  )
+}
+
+resource "aws_iam_instance_profile" "frontend" {
+  name = "${var.project_name}-${var.environment}-frontend-profile"
+
+  role = aws_iam_role.ec2.name
 }
