@@ -1,7 +1,7 @@
 resource "aws_secretsmanager_secret" "database" {
   name = "${var.project_name}/${var.environment}/database"
 
-  description = "Database credentials"
+  description = "Database credentials secret"
 
   tags = merge(
     var.tags,

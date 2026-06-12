@@ -9,7 +9,7 @@ module "networking" {
   public_subnet_b_cidr  = var.public_subnet_b_cidr
   private_subnet_a_cidr = var.private_subnet_a_cidr
   private_subnet_b_cidr = var.private_subnet_b_cidr
-  region = var.region
+  region                = var.region
 
   tags = var.tags
 }
@@ -30,6 +30,9 @@ module "iam" {
 
   project_name = var.project_name
   environment  = var.environment
+
+  database_secret_arn = module.secrets.database_secret_arn
+  jwt_secret_arn      = module.secrets.jwt_secret_arn
 
   tags = var.tags
 }
@@ -60,7 +63,7 @@ module "alb" {
 
   alb_log_bucket_name = module.logging.alb_log_bucket_name
 
-  certificate_arn = null
+  certificate_arn = module.acm.certificate_arn
 
   tags = var.tags
 }
@@ -103,6 +106,12 @@ module "ecs" {
   ecs_execution_role_arn = module.iam.ecs_execution_role_arn
   ecs_task_role_arn      = module.iam.ecs_task_role_arn
 
+  backend_image = "${module.ecr.repository_url}:latest"
+
+  database_secret_arn = module.secrets.database_secret_arn
+  jwt_secret_arn      = module.secrets.jwt_secret_arn
+
+
   region = var.region
 
   tags = var.tags
@@ -121,6 +130,51 @@ module "rds" {
 
   db_name     = var.db_name
   db_username = var.db_username
+
+  tags = var.tags
+}
+
+module "ecr" {
+  source = "../../modules/ecr"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  tags = var.tags
+}
+
+module "secrets" {
+  source = "../../modules/secrets"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  tags = var.tags
+}
+
+module "route53" {
+  source = "../../modules/route53"
+
+  project_name = var.project_name
+
+  domain_name = var.domain_name
+  subdomain   = var.subdomain_name
+
+  alb_dns_name = module.alb.alb_dns_name
+  alb_zone_id  = module.alb.alb_zone_id
+
+  tags = var.tags
+}
+
+module "acm" {
+  source = "../../modules/acm"
+
+  project_name = var.project_name
+
+  domain_name = var.domain_name
+  subdomain   = var.subdomain_name
+
+  hosted_zone_id = module.route53.hosted_zone_id
 
   tags = var.tags
 }

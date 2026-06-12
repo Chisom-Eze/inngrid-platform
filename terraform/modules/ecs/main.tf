@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "backend" {
     {
       name = "backend"
 
-      image = "nginx:1.28"
+      image = var.backend_image
 
       essential = true
 
@@ -52,6 +52,28 @@ resource "aws_ecs_task_definition" "backend" {
         {
           containerPort = 8000
           protocol      = "tcp"
+        }
+      ]
+
+      environment = [
+        {
+          name  = "ENVIRONMENT"
+          value = var.environment
+        },
+        {
+          name  = "AWS_REGION"
+          value = var.region
+        },
+        {
+          name  = "DATABASE_SECRET_ARN"
+          value = var.database_secret_arn
+        }
+      ]
+
+      secrets = [
+        {
+          name      = "JWT_SECRET"
+          valueFrom = var.jwt_secret_arn
         }
       ]
 
@@ -82,11 +104,13 @@ resource "aws_ecs_service" "backend" {
 
   task_definition = aws_ecs_task_definition.backend.arn
 
-  desired_count = 2
+  desired_count = 1
 
   deployment_minimum_healthy_percent = 100
 
   deployment_maximum_percent = 200
+
+  enable_execute_command = true
 
   launch_type = "FARGATE"
 
@@ -122,8 +146,8 @@ resource "aws_ecs_service" "backend" {
 }
 
 resource "aws_appautoscaling_target" "ecs" {
-  max_capacity = 4
-  min_capacity = 2
+  max_capacity = 2
+  min_capacity = 1
 
   resource_id = "service/${aws_ecs_cluster.this.name}/${aws_ecs_service.backend.name}"
 
