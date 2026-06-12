@@ -30,8 +30,19 @@ variable "region" {
   type = string
 }
 
+variable "backend_image" {
+  type = string
+}
+
+variable "jwt_secret_arn" {
+  type = string
+}
+
+variable "database_secret_arn" {
+  type = string
+}
+
 variable "tags" {
   description = "Common resource tags"
-
   type = map(string)
 }

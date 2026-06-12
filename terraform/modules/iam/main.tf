@@ -42,7 +42,10 @@ resource "aws_iam_policy" "secrets_manager_read" {
         "secretsmanager:GetSecretValue"
       ]
 
-      Resource = "*"
+      Resource = [
+        var.jwt_secret_arn,
+        var.database_secret_arn
+      ]
     }]
   })
 

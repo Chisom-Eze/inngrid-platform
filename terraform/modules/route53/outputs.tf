@@ -9,3 +9,4 @@ output "name_servers" {
 output "application_fqdn" {
   value = "${var.subdomain}.${var.domain_name}"
 }
+
