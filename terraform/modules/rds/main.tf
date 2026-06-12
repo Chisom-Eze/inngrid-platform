@@ -34,13 +34,13 @@ resource "aws_db_instance" "this" {
 
   monitoring_interval = 60
 
-  monitoring_role_arn = aws_iam_role.rds_monitoring.arn
+  monitoring_role_arn = var.rds_monitoring_role_arn
 
   publicly_accessible = false
 
-  skip_final_snapshot = false
+  skip_final_snapshot = true
 
-  deletion_protection = true
+  deletion_protection = false
 
   db_subnet_group_name = aws_db_subnet_group.this.name
 

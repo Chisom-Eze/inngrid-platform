@@ -3,10 +3,14 @@ resource "aws_security_group" "alb" {
   description = "Security group for Application Load Balancer"
   vpc_id      = var.vpc_id
 
-  tags = {
-    Name = "${var.project_name}-${var.environment}-alb-sg"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-alb-sg"
+    }
+  )
 }
+
 
 resource "aws_vpc_security_group_ingress_rule" "alb_http" {
   security_group_id = aws_security_group.alb.id
@@ -38,15 +42,18 @@ resource "aws_security_group" "frontend" {
   description = "Security group for EC2 instances"
   vpc_id      = var.vpc_id
 
-  tags = {
-    Name = "${var.project_name}-${var.environment}-frontend-sg"
-  }
+  tags = merge(
+  var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-frontend-sg"
+    }
+  )
 }
 
 resource "aws_vpc_security_group_ingress_rule" "frontend_from_alb" {
   security_group_id = aws_security_group.frontend.id
 
-  source_security_group_id = aws_security_group.alb.id
+  referenced_security_group_id = aws_security_group.alb.id
 
   from_port   = 80
   to_port     = 80
@@ -65,18 +72,21 @@ resource "aws_security_group" "backend" {
   description = "Security group for backend ECS services"
   vpc_id      = var.vpc_id
 
-  tags = {
-    Name = "${var.project_name}-${var.environment}-backend-sg"
-  }
+  tags = merge(
+  var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-backend-sg"
+    }
+  )
 }
 
-resource "aws_vpc_security_group_ingress_rule" "backend_from_frontend" {
+resource "aws_vpc_security_group_ingress_rule" "backend_from_alb" {
   security_group_id = aws_security_group.backend.id
 
-  referenced_security_group_id = aws_security_group.frontend.id
+  referenced_security_group_id = aws_security_group.alb.id
 
-  from_port   = 8080
-  to_port     = 8080
+  from_port   = 8000
+  to_port     = 8000
   ip_protocol = "tcp"
 }
 
@@ -92,9 +102,12 @@ resource "aws_security_group" "database" {
   description = "Security group for PostgreSQL"
   vpc_id      = var.vpc_id
 
-  tags = {
-    Name = "${var.project_name}-${var.environment}-database-sg"
-  }
+  tags = merge(
+  var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-database-sg"
+    }
+  )
 }
 
 resource "aws_vpc_security_group_ingress_rule" "database_from_backend" {

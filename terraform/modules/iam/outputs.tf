@@ -9,3 +9,7 @@ output "ecs_task_role_arn" {
 output "instance_profile_name" {
   value = aws_iam_instance_profile.frontend.name
 }
+
+output "rds_monitoring_role_arn" {
+  value = aws_iam_role.rds_monitoring.arn
+}
