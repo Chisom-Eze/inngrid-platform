@@ -25,3 +25,7 @@ variable "db_name" {
 variable "db_username" {
   type = string
 }
+
+variable "rds_monitoring_role_arn" {
+  type = string
+}

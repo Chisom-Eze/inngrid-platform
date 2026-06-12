@@ -96,27 +96,6 @@ resource "aws_lb_target_group" "backend" {
   )
 }
 
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.this.arn
-
-  port = 80
-
-  protocol = "HTTP"
-
-  default_action {
-    type = "forward"
-
-    target_group_arn = aws_lb_target_group.frontend.arn
-  }
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-cluster"
-    }
-  )
-}
-
 resource "aws_lb_listener_rule" "backend_api" {
   listener_arn = aws_lb_listener.http.arn
 
@@ -162,36 +141,18 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-resource "aws_s3_bucket" "alb_logs" {
-  bucket = "${var.project_name}-${var.environment}-alb-logs"
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.this.arn
 
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-alb-logs"
-    }
-  )
-}
+  port     = 443
+  protocol = "HTTPS"
 
-resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
-  alarm_name = "${var.project_name}-${var.environment}-alb-5xx"
+  certificate_arn = var.certificate_arn
 
-  comparison_operator = "GreaterThanThreshold"
+  default_action {
+    type = "forward"
 
-  evaluation_periods = 2
-
-  metric_name = "HTTPCode_ELB_5XX_Count"
-
-  namespace = "AWS/ApplicationELB"
-
-  period = 300
-
-  statistic = "Sum"
-
-  threshold = 5
-
-  dimensions = {
-    LoadBalancer = aws_lb.this.arn_suffix
+    target_group_arn = aws_lb_target_group.frontend.arn
   }
 }
 
