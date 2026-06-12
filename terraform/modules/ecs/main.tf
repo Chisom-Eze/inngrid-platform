@@ -201,11 +201,4 @@ resource "aws_appautoscaling_policy" "cpu" {
 
     target_value = 60
   }
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-cluster"
-    }
-  )
 }

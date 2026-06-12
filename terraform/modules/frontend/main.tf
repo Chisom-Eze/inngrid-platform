@@ -56,14 +56,6 @@ resource "aws_launch_template" "frontend" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "frontend" {
-  target_group_arn = var.frontend_target_group_arn
-
-  target_id = aws_instance.frontend.id
-
-  port = 80
-}
-
 resource "aws_cloudwatch_log_group" "frontend_nginx_access" {
   name              = "/inngrid/frontend/nginx/access"
   retention_in_days = 7
@@ -72,4 +64,49 @@ resource "aws_cloudwatch_log_group" "frontend_nginx_access" {
 resource "aws_cloudwatch_log_group" "frontend_nginx_error" {
   name              = "/inngrid/frontend/nginx/error"
   retention_in_days = 7
+}
+
+resource "aws_autoscaling_group" "this" {
+  name = "${var.project_name}-${var.environment}-frontend-asg"
+
+  min_size         = var.min_size
+  desired_capacity = var.desired_capacity
+  max_size         = var.max_size
+
+  vpc_zone_identifier = var.private_subnet_ids
+
+  target_group_arns = [
+    var.frontend_target_group_arn
+  ]
+
+  health_check_type = "ELB"
+
+  health_check_grace_period = 300
+
+  launch_template {
+    id      = aws_launch_template.frontend.id
+    version = "$Latest"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "${var.project_name}-${var.environment}-frontend"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_autoscaling_policy" "cpu" {
+  name = "${var.project_name}-${var.environment}-frontend-cpu"
+
+  autoscaling_group_name = aws_autoscaling_group.this.name
+
+  policy_type = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 70
+  }
 }
