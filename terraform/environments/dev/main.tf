@@ -178,3 +178,42 @@ module "acm" {
 
   tags = var.tags
 }
+
+module "monitoring" {
+  source = "../../modules/monitoring"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  region = var.region
+
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  ecs_service_name = module.ecs.ecs_service_name
+
+  db_instance_id = module.rds.db_instance_id
+
+  alb_arn_suffix = module.alb.alb_arn_suffix
+
+  tags = var.tags
+}
+
+module "remote_state" {
+  source = "../../modules/remote_state"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  tags = var.tags
+}
+
+module "github_oidc" {
+  source = "../../modules/github-oidc"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  github_org  = "Chisom-Eze"
+  github_repo = "inngrid-platform"
+
+  tags = var.tags
+}

@@ -43,7 +43,7 @@ resource "aws_security_group" "frontend" {
   vpc_id      = var.vpc_id
 
   tags = merge(
-  var.tags,
+    var.tags,
     {
       Name = "${var.project_name}-${var.environment}-frontend-sg"
     }
@@ -73,7 +73,7 @@ resource "aws_security_group" "backend" {
   vpc_id      = var.vpc_id
 
   tags = merge(
-  var.tags,
+    var.tags,
     {
       Name = "${var.project_name}-${var.environment}-backend-sg"
     }
@@ -103,7 +103,7 @@ resource "aws_security_group" "database" {
   vpc_id      = var.vpc_id
 
   tags = merge(
-  var.tags,
+    var.tags,
     {
       Name = "${var.project_name}-${var.environment}-database-sg"
     }
