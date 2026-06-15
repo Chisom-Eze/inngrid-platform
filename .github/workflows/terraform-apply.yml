@@ -1,9 +1,7 @@
 name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -11,6 +9,7 @@ permissions:
 
 jobs:
   terraform:
+    name: Terraform Apply
     runs-on: ubuntu-latest
 
     defaults:
@@ -18,14 +17,14 @@ jobs:
         working-directory: terraform/environments/dev
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: YOUR_ROLE_ARN
-          aws-region: us-east-1
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
