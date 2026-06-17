@@ -44,5 +44,5 @@ variable "database_secret_arn" {
 
 variable "tags" {
   description = "Common resource tags"
-  type = map(string)
+  type        = map(string)
 }
