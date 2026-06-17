@@ -1,0 +1,17 @@
+name: TFSec
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tfsec:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run TFSec
+        uses: aquasecurity/tfsec-action@v1.0.3
