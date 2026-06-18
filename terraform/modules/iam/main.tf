@@ -76,7 +76,10 @@ resource "aws_iam_policy" "s3_access" {
         "s3:PutObject"
       ]
 
-      Resource = "*"
+      resources = [
+        aws_s3_bucket.frontend.arn,
+        "${aws_s3_bucket.frontend.arn}/*"
+      ]
     }]
   })
 

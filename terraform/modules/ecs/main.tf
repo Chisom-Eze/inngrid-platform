@@ -63,18 +63,18 @@ resource "aws_ecs_task_definition" "backend" {
         {
           name  = "AWS_REGION"
           value = var.region
-        },
-        {
-          name  = "DATABASE_SECRET_ARN"
-          value = var.database_secret_arn
         }
       ]
 
       secrets = [
-        {
-          name      = "JWT_SECRET"
-          valueFrom = var.jwt_secret_arn
-        }
+         {
+           name      = "DATABASE_SECRET"
+            valueFrom = var.database_secret_arn
+         },
+         {
+            name      = "JWT_SECRET"
+            valueFrom = var.jwt_secret_arn
+      }
       ]
 
       logConfiguration = {

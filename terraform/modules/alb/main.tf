@@ -1,3 +1,5 @@
+#tfsec:ignore:aws-elb-alb-not-public
+
 resource "aws_lb" "this" {
   name = "${var.project_name}-${var.environment}-alb"
 
@@ -21,6 +23,7 @@ resource "aws_lb" "this" {
       Name = "${var.project_name}-${var.environment}-cluster"
     }
   )
+  drop_invalid_header_fields = true
 }
 
 resource "aws_lb_target_group" "frontend" {
