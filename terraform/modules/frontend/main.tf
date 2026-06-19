@@ -38,7 +38,7 @@ resource "aws_launch_template" "frontend" {
     name = var.instance_profile_name
   } 
 
-  metametadata_options {
+  metadata_options {
     http_tokens = "required"
   }
 

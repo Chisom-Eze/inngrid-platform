@@ -1,5 +1,4 @@
-#tfsec:ignore:aws-elb-alb-not-public
-
+#tfsec:ignore:aws-elb-alb-not-public --- IGNORE ---
 resource "aws_lb" "this" {
   name = "${var.project_name}-${var.environment}-alb"
 

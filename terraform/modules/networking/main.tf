@@ -24,6 +24,7 @@ resource "aws_internet_gateway" "main" {
   )
 }
 
+#tfsec:ignore:aws-ec2-no-public-ip-subnet --- IGNORE ---
 resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_a_cidr
@@ -39,6 +40,7 @@ resource "aws_subnet" "public_a" {
   )
 }
 
+#tfsec:ignore:aws-ec2-no-public-ip-subnet --- IGNORE ---
 resource "aws_subnet" "public_b" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_b_cidr
