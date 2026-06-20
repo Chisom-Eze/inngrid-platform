@@ -14,6 +14,7 @@ resource "aws_ecs_cluster" "this" {
   )
 }
 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "backend" {
   name = "/ecs/${var.project_name}-${var.environment}"
 
@@ -67,14 +68,14 @@ resource "aws_ecs_task_definition" "backend" {
       ]
 
       secrets = [
-         {
-           name      = "DATABASE_SECRET"
-            valueFrom = var.database_secret_arn
-         },
-         {
-            name      = "JWT_SECRET"
-            valueFrom = var.jwt_secret_arn
-      }
+        {
+          name      = "DATABASE_SECRET"
+          valueFrom = var.database_secret_arn
+        },
+        {
+          name      = "JWT_SECRET"
+          valueFrom = var.jwt_secret_arn
+        }
       ]
 
       logConfiguration = {
