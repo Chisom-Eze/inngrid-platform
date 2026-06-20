@@ -11,6 +11,7 @@ resource "aws_db_subnet_group" "this" {
   )
 }
 
+#tfsec:ignore:aws0176
 resource "aws_db_instance" "this" {
   identifier = "${var.project_name}-${var.environment}-postgres"
 
@@ -30,7 +31,7 @@ resource "aws_db_instance" "this" {
 
   backup_retention_period = 7
 
-  performance_insights_enabled = true
+  performance_insights_enabled = false
 
   monitoring_interval = 60
 

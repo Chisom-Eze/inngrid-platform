@@ -46,6 +46,10 @@ resource "aws_dynamodb_table" "terraform_lock" {
     enabled = true
   }
 
+  server_side_encryption {
+    enabled       = true
+  }
+
   tags = merge(
     var.tags,
     {
