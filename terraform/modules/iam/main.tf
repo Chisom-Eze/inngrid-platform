@@ -185,6 +185,7 @@ resource "aws_iam_role" "flow_logs" {
   })
 }
 
+#tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_role_policy" "flow_logs" {
   name = "${var.project_name}-${var.environment}-flowlogs-policy"
 

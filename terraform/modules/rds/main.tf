@@ -11,7 +11,7 @@ resource "aws_db_subnet_group" "this" {
   )
 }
 
-#tfsec:ignore:aws0176
+#tfsec:ignore:aws0176 
 resource "aws_db_instance" "this" {
   identifier = "${var.project_name}-${var.environment}-postgres"
 
