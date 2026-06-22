@@ -107,8 +107,9 @@ module "ecs" {
 
   ecs_execution_role_arn = module.iam.ecs_execution_role_arn
   ecs_task_role_arn      = module.iam.ecs_task_role_arn
-
-  backend_image = "${module.ecr.repository_url}:latest"
+  
+  backend_image_repository = module.ecr.repository_url
+  backend_image_tag = "v1.0.0"
 
   database_secret_arn = module.secrets.database_secret_arn
   jwt_secret_arn      = module.secrets.jwt_secret_arn
