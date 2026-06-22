@@ -13,3 +13,7 @@ output "instance_profile_name" {
 output "rds_monitoring_role_arn" {
   value = aws_iam_role.rds_monitoring.arn
 }
+
+output "flow_logs_role_arn" {
+  value = aws_iam_role.flow_logs.arn
+}

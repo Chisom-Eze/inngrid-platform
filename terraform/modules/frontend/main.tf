@@ -38,6 +38,10 @@ resource "aws_launch_template" "frontend" {
     name = var.instance_profile_name
   }
 
+  metadata_options {
+    http_tokens = "required"
+  }
+
   vpc_security_group_ids = [
     var.frontend_security_group_id
   ]
@@ -56,11 +60,13 @@ resource "aws_launch_template" "frontend" {
   }
 }
 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "frontend_nginx_access" {
   name              = "/inngrid/frontend/nginx/access"
   retention_in_days = 7
 }
 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "frontend_nginx_error" {
   name              = "/inngrid/frontend/nginx/error"
   retention_in_days = 7

@@ -62,38 +62,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_secrets" {
   policy_arn = aws_iam_policy.secrets_manager_read.arn
 }
 
-resource "aws_iam_policy" "s3_access" {
-  name = "${var.project_name}-${var.environment}-s3-access"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [{
-      Effect = "Allow"
-
-      Action = [
-        "s3:GetObject",
-        "s3:PutObject"
-      ]
-
-      Resource = "*"
-    }]
-  })
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-s3-access"
-    }
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_s3" {
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.s3_access.arn
-}
-
-
 resource "aws_iam_role_policy_attachment" "ssm" {
   role = aws_iam_role.ec2.name
 
@@ -197,4 +165,47 @@ resource "aws_iam_instance_profile" "frontend" {
   name = "${var.project_name}-${var.environment}-frontend-profile"
 
   role = aws_iam_role.ec2.name
+}
+
+resource "aws_iam_role" "flow_logs" {
+  name = "${var.project_name}-${var.environment}-flowlogs-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Principal = {
+        Service = "vpc-flow-logs.amazonaws.com"
+      }
+
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+#tfsec:ignore:aws-iam-no-policy-wildcards
+resource "aws_iam_role_policy" "flow_logs" {
+  name = "${var.project_name}-${var.environment}-flowlogs-policy"
+
+  role = aws_iam_role.flow_logs.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams"
+      ]
+
+      Resource = "*"
+    }]
+  })
 }

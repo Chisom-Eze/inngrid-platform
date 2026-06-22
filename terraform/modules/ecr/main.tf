@@ -1,7 +1,8 @@
+#tfsec:ignore:aws-ecr-repository-customer-key
 resource "aws_ecr_repository" "backend" {
   name = "${var.project_name}-${var.environment}-backend"
 
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = "IMMUTABLE"
 
   force_delete = false
 

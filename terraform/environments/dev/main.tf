@@ -11,6 +11,8 @@ module "networking" {
   private_subnet_b_cidr = var.private_subnet_b_cidr
   region                = var.region
 
+  flow_logs_role_arn = module.iam.flow_logs_role_arn
+
   tags = var.tags
 }
 

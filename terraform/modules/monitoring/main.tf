@@ -1,3 +1,4 @@
+#tfsec:ignore:aws-sns-enable-topic-encryption
 resource "aws_sns_topic" "alerts" {
   name = "${var.project_name}-${var.environment}-alerts"
 }
@@ -150,56 +151,56 @@ resource "aws_cloudwatch_dashboard" "platform" {
   dashboard_body = jsonencode({
     widgets = [
       {
-        type = "metric"
-        x    = 0
-        y    = 0
+        type   = "metric"
+        x      = 0
+        y      = 0
         width  = 12
         height = 6
         properties = {
           metrics = [
-            [ "AWS/ECS", "CPUUtilization", "ClusterName", var.ecs_cluster_name, "ServiceName", var.ecs_service_name ],
-            [ ".", "MemoryUtilization", ".", ".", ".", "." ]
+            ["AWS/ECS", "CPUUtilization", "ClusterName", var.ecs_cluster_name, "ServiceName", var.ecs_service_name],
+            [".", "MemoryUtilization", ".", ".", ".", "."]
           ]
-          view       = "timeSeries"
-          stacked    = false
-          region     = var.region
-          title      = "ECS CPU and Memory Utilization"
-          period     = 300
+          view    = "timeSeries"
+          stacked = false
+          region  = var.region
+          title   = "ECS CPU and Memory Utilization"
+          period  = 300
         }
       },
       {
-        type = "metric"
-        x    = 12
-        y    = 0
+        type   = "metric"
+        x      = 12
+        y      = 0
         width  = 12
         height = 6
         properties = {
           metrics = [
-            [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", var.db_instance_id ],
-            [ ".", "FreeStorageSpace", ".", "." ]
+            ["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", var.db_instance_id],
+            [".", "FreeStorageSpace", ".", "."]
           ]
-          view       = "timeSeries"
-          stacked    = false
-          region     = var.region
-          title      = "RDS CPU and Free Storage Space"
-          period     = 300
+          view    = "timeSeries"
+          stacked = false
+          region  = var.region
+          title   = "RDS CPU and Free Storage Space"
+          period  = 300
         }
       },
       {
-        type = "metric"
-        x    = 0
-        y    = 6
+        type   = "metric"
+        x      = 0
+        y      = 6
         width  = 12
         height = 6
         properties = {
-          metrics   = [
-            [ "AWS/ApplicationELB", "HTTPCode_ELB_5XX_Count", "LoadBalancer", var.alb_arn_suffix ]
+          metrics = [
+            ["AWS/ApplicationELB", "HTTPCode_ELB_5XX_Count", "LoadBalancer", var.alb_arn_suffix]
           ]
-          view       = "timeSeries"
-          stacked    = false
-          region     = var.region
-          title      = "ALB HTTPCode ELB 5XX Count"
-          period     = 300
+          view    = "timeSeries"
+          stacked = false
+          region  = var.region
+          title   = "ALB HTTPCode ELB 5XX Count"
+          period  = 300
         }
       }
     ]

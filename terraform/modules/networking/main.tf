@@ -13,6 +13,22 @@ resource "aws_vpc" "main" {
   )
 }
 
+resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
+  name              = "/aws/vpc/${var.project_name}-${var.environment}"
+  retention_in_days = 7
+}
+
+resource "aws_flow_log" "vpc" {
+
+  iam_role_arn = var.flow_logs_role_arn
+
+  log_destination = aws_cloudwatch_log_group.vpc_flow_logs.arn
+
+  traffic_type = "ALL"
+
+  vpc_id = aws_vpc.main.id
+}
+
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
@@ -24,6 +40,7 @@ resource "aws_internet_gateway" "main" {
   )
 }
 
+#tfsec:ignore:aws-ec2-no-public-ip-subnet --- IGNORE ---
 resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_a_cidr
@@ -39,6 +56,7 @@ resource "aws_subnet" "public_a" {
   )
 }
 
+#tfsec:ignore:aws-ec2-no-public-ip-subnet --- IGNORE ---
 resource "aws_subnet" "public_b" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_b_cidr

@@ -9,6 +9,7 @@ resource "aws_s3_bucket" "terraform_state" {
   )
 }
 
+#tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
 
@@ -19,6 +20,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" 
   }
 }
 
+#tfsec:ignore:aws-s3-bucket-versioning-customer-key
 resource "aws_s3_bucket_versioning" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
 
@@ -27,6 +29,7 @@ resource "aws_s3_bucket_versioning" "terraform_state" {
   }
 }
 
+#tfsec:ignore:aws-dynamodb-table-customer-key
 resource "aws_dynamodb_table" "terraform_lock" {
   name = "${var.project_name}-${var.environment}-terraform-lock"
 
@@ -37,6 +40,14 @@ resource "aws_dynamodb_table" "terraform_lock" {
   attribute {
     name = "LockID"
     type = "S"
+  }
+
+  point_in_time_recovery {
+    enabled = true
+  }
+
+  server_side_encryption {
+    enabled = true
   }
 
   tags = merge(

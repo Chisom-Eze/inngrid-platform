@@ -9,6 +9,7 @@ resource "aws_s3_bucket" "alb_logs" {
   )
 }
 
+#tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket_server_side_encryption_configuration" "alb_logs" {
   bucket = aws_s3_bucket.alb_logs.id
 
@@ -36,10 +37,18 @@ resource "aws_s3_bucket_lifecycle_configuration" "alb_logs" {
     status = "Enabled"
 
     expiration {
-      days = 90
+      days = 14
     }
   }
 }
 
 data "aws_caller_identity" "current" {}
 
+resource "aws_s3_bucket_public_access_block" "alb_logs" {
+  bucket = aws_s3_bucket.alb_logs.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}

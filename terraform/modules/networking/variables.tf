@@ -38,6 +38,10 @@ variable "private_subnet_b_cidr" {
   type        = string
 }
 
+variable "flow_logs_role_arn" {
+  type = string
+}
+
 variable "tags" {
   description = "Common tags applied to all resources"
   type        = map(string)
