@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "backend" {
     {
       name = "backend"
 
-      image = var.backend_image
+      image = "${var.backend_image_repository}:${var.backend_image_tag}"
 
       essential = true
 
