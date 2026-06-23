@@ -200,15 +200,6 @@ module "monitoring" {
   tags = var.tags
 }
 
-module "remote_state" {
-  source = "../../modules/remote_state"
-
-  project_name = var.project_name
-  environment  = var.environment
-
-  tags = var.tags
-}
-
 module "github_oidc" {
   source = "../../modules/github-oidc"
 
