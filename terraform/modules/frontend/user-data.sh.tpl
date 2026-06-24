@@ -8,6 +8,15 @@ apt-get update -y
 
 apt-get install -y nginx wget curl unzip
 
+#
+# Install Node.js 22
+#
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+
+apt-get install -y nodejs
+
+npm install -g pm2
+
 systemctl enable nginx
 systemctl start nginx
 
