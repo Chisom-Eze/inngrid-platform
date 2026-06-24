@@ -199,24 +199,3 @@ module "monitoring" {
 
   tags = var.tags
 }
-
-module "remote_state" {
-  source = "../../modules/remote_state"
-
-  project_name = var.project_name
-  environment  = var.environment
-
-  tags = var.tags
-}
-
-module "github_oidc" {
-  source = "../../modules/github-oidc"
-
-  project_name = var.project_name
-  environment  = var.environment
-
-  github_org  = "Chisom-Eze"
-  github_repo = "inngrid-platform"
-
-  tags = var.tags
-}
