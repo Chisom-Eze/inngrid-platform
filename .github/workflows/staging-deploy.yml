@@ -1,15 +1,19 @@
 name: InnGrid Staging Deployment
 
 permissions:
+  id-token: write
   contents: read
 
 on:
   push:
     branches:
       - develop
+      
+    paths:
+      - 'backend/**'
 
 jobs:
-  staging-deployment:
+  deploy-backend:
     runs-on: ubuntu-latest
 
     environment:
@@ -19,15 +23,39 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Simulate Staging Deployment
-        run: |
-          echo "Deploying InnGrid application to staging environment..."
-          echo "Running deployment health validation..."
-          echo "Staging deployment successful."
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Simulate Health Check
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV  
+
+      - name: Build Docker Image
         run: |
-          echo "Checking staging application health..."
-          echo "Frontend healthy."
-          echo "Backend healthy."
-          echo "Database connectivity healthy."
+          docker build \
+            -t inngrid-dev-backend:${IMAGE_TAG} \
+            ./backend
+
+      - name: Tag Docker Image
+        run: |
+          docker tag \
+          inngrid-dev-backend:${IMAGE_TAG} \
+          625444834398.dkr.ecr.us-east-1.amazonaws.com/inngrid-dev-backend:${IMAGE_TAG}
+
+      - name: Push Docker Image
+        run: |
+          docker push \
+          625444834398.dkr.ecr.us-east-1.amazonaws.com/inngrid-dev-backend:${IMAGE_TAG}
+
+      - name: Force ECS Deployment
+        run: |
+          aws ecs update-service \
+            --cluster inngrid-dev-cluster \
+            --service inngrid-dev-backend \
+            --force-new-deployment
