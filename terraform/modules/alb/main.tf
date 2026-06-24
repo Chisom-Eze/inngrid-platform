@@ -43,7 +43,7 @@ resource "aws_lb_target_group" "frontend" {
 
     protocol = "HTTP"
 
-    matcher = "200"
+    matcher = "200-399"
 
     healthy_threshold = 3
 
@@ -99,7 +99,7 @@ resource "aws_lb_target_group" "backend" {
 }
 
 resource "aws_lb_listener_rule" "backend_api" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.https.arn
 
   priority = 100
 
@@ -111,14 +111,19 @@ resource "aws_lb_listener_rule" "backend_api" {
 
   condition {
     path_pattern {
-      values = ["/api/*"]
+      values = [
+        "/api/*",
+        "/health",
+        "/docs",
+        "/openapi.json"
+      ]
     }
   }
 
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.environment}-cluster"
+      Name = "${var.project_name}-${var.environment}-backend-api-rule"
     }
   )
 }
