@@ -1,4 +1,3 @@
-#tfSec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "${var.project_name}-${var.environment}-terraform-state"
 
@@ -14,6 +13,7 @@ resource "aws_s3_bucket" "terraform_state" {
   )
 }
 
+#tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
 
