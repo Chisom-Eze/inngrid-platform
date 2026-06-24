@@ -57,6 +57,11 @@ resource "aws_iam_policy" "secrets_manager_read" {
   )
 }
 
+resource "aws_iam_role_policy_attachment" "ecs_execution_secrets" {
+  role       = aws_iam_role.ecs_execution_role.name
+  policy_arn = aws_iam_policy.secrets_manager_read.arn
+}
+
 resource "aws_iam_role_policy_attachment" "ecs_task_secrets" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.secrets_manager_read.arn
