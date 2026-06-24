@@ -8,6 +8,10 @@ on:
   push:
     branches:
       - develop
+      
+    paths:
+      - 'backend/**'
+      - '.github/workflows/staging-deploy.yml'
 
 jobs:
   deploy-backend:
