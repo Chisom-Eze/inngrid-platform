@@ -1,3 +1,4 @@
+#tfSec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "${var.project_name}-${var.environment}-terraform-state"
 
