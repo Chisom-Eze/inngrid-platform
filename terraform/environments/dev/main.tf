@@ -33,7 +33,7 @@ module "iam" {
   project_name = var.project_name
   environment  = var.environment
 
-  database_secret_arn = module.secrets.database_secret_arn
+  database_secret_arn = module.rds.db_secret_arn
   jwt_secret_arn      = module.secrets.jwt_secret_arn
 
   tags = var.tags
@@ -111,7 +111,7 @@ module "ecs" {
   backend_image_repository = module.ecr.repository_url
   backend_image_tag        = "v1.0.0"
 
-  database_secret_arn = module.secrets.database_secret_arn
+  database_secret_arn = module.rds.db_secret_arn
   jwt_secret_arn      = module.secrets.jwt_secret_arn
 
 
