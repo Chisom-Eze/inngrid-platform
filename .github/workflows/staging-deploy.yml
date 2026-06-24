@@ -11,7 +11,6 @@ on:
       
     paths:
       - 'backend/**'
-      - '.github/workflows/staging-deploy.yml'
 
 jobs:
   deploy-backend:
@@ -34,22 +33,25 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV  
+
       - name: Build Docker Image
         run: |
           docker build \
-            -t inngrid-dev-backend:v1.0.0 \
+            -t inngrid-dev-backend:${IMAGE_TAG} \
             ./backend
 
       - name: Tag Docker Image
         run: |
           docker tag \
-          inngrid-dev-backend:v1.0.0 \
-          625444834398.dkr.ecr.us-east-1.amazonaws.com/inngrid-dev-backend:v1.0.0
+          inngrid-dev-backend:${IMAGE_TAG} \
+          625444834398.dkr.ecr.us-east-1.amazonaws.com/inngrid-dev-backend:${IMAGE_TAG}
 
       - name: Push Docker Image
         run: |
           docker push \
-          625444834398.dkr.ecr.us-east-1.amazonaws.com/inngrid-dev-backend:v1.0.0
+          625444834398.dkr.ecr.us-east-1.amazonaws.com/inngrid-dev-backend:${IMAGE_TAG}
 
       - name: Force ECS Deployment
         run: |
