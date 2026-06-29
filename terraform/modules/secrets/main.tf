@@ -1,18 +1,4 @@
 #tfsec:ignore:aws-secretsmanager-secret-customer-key
-resource "aws_secretsmanager_secret" "database" {
-  name = "${var.project_name}/${var.environment}/database"
-
-  description = "Database credentials secret"
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-database-secret"
-    }
-  )
-}
-
-#tfsec:ignore:aws-secretsmanager-secret-customer-key
 resource "aws_secretsmanager_secret" "jwt" {
   name = "${var.project_name}/${var.environment}/jwt"
 
