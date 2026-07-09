@@ -33,8 +33,9 @@ module "iam" {
   project_name = var.project_name
   environment  = var.environment
 
-  database_secret_arn = module.rds.db_secret_arn
-  jwt_secret_arn      = module.secrets.jwt_secret_arn
+  database_secret_arn           = module.rds.db_secret_arn
+  jwt_secret_arn                = module.secrets.jwt_secret_arn
+  frontend_artifacts_bucket_arn = module.artifacts.bucket_arn
 
   tags = var.tags
 }
@@ -83,6 +84,8 @@ module "frontend" {
   frontend_target_group_arn = module.alb.frontend_target_group_arn
 
   private_subnet_ids = module.networking.private_subnet_ids
+
+  frontend_artifacts_bucket_arn = module.artifacts.bucket_arn
 
   instance_type = var.instance_type
 
@@ -198,4 +201,12 @@ module "monitoring" {
   alb_arn_suffix = module.alb.alb_arn_suffix
 
   tags = var.tags
+}
+
+module "artifacts" {
+  source = "../../modules/artifacts"
+
+  project_name = var.project_name
+  environment  = var.environment
+  tags         = var.tags
 }

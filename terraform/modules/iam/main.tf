@@ -214,3 +214,37 @@ resource "aws_iam_role_policy" "flow_logs" {
     }]
   })
 }
+
+resource "aws_iam_policy" "frontend_artifacts_read" {
+  name = "${var.project_name}-${var.environment}-frontend-artifacts-read"
+
+  policy = jsonencode({
+  Version = "2012-10-17"
+
+  Statement = [
+    {
+      Effect = "Allow"
+
+      Action = [
+        "s3:GetObject"
+      ]
+
+      Resource = [
+        "${var.frontend_artifacts_bucket_arn}/*"
+      ]
+    }
+  ]
+})
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-frontend-artifacts-read"
+    }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "frontend_artifacts_read" {
+  role       = aws_iam_role.ec2.name
+  policy_arn = aws_iam_policy.frontend_artifacts_read.arn
+}
