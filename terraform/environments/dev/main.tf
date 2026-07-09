@@ -33,8 +33,8 @@ module "iam" {
   project_name = var.project_name
   environment  = var.environment
 
-  database_secret_arn = module.rds.db_secret_arn
-  jwt_secret_arn      = module.secrets.jwt_secret_arn
+  database_secret_arn           = module.rds.db_secret_arn
+  jwt_secret_arn                = module.secrets.jwt_secret_arn
   frontend_artifacts_bucket_arn = module.artifacts.bucket_arn
 
   tags = var.tags
