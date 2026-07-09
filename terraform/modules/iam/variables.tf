@@ -22,3 +22,8 @@ variable "database_secret_arn" {
   description = "ARN of the database credentials secret in AWS Secrets Manager"
   type        = string
 }
+
+variable "frontend_artifacts_bucket_arn" {
+  description = "ARN of the frontend artifact bucket"
+  type = string
+}

@@ -5,8 +5,12 @@ set -euxo pipefail
 
 apt-get update -y
 
+apt-get install -y nginx wget curl unzip jq
 
-apt-get install -y nginx wget curl unzip
+mkdir -p /opt/inngrid/scripts
+mkdir -p /opt/inngrid/logs
+
+mkdir -p /opt/inngrid/frontend
 
 #
 # Install Node.js 22
@@ -15,7 +19,31 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 
 apt-get install -y nodejs
 
+#
+# Install PM2
+#
 npm install -g pm2
+
+pm2 startup systemd -u ssm-user --hp /home/ssm-user
+
+#
+# Install AWS CLI v2
+#
+cd /tmp
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
+  -o awscliv2.zip
+
+unzip -q awscliv2.zip
+
+./aws/install
+
+#
+# Create frontend deployment directory
+#
+mkdir -p /opt/inngrid/frontend
+
+chown -R ssm-user:ssm-user /opt/inngrid
 
 systemctl enable nginx
 systemctl start nginx
@@ -112,20 +140,61 @@ EOF
   -s
 
 
-cat > /var/www/html/index.html <<EOF
-<!DOCTYPE html>
-<html>
-<head>
-  <title>InnGrid Frontend</title>
-</head>
-<body>
-  <h1>InnGrid Frontend Server</h1>
-  <p>Environment: ${environment}</p>
-</body>
-</html>
+cat > /etc/nginx/sites-available/default <<'EOF'
+server {
+    listen 80;
+
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_cache_bypass $http_upgrade;
+    }
+}
 EOF
 
-systemctl restart nginx
+cat >/opt/inngrid/scripts/deploy-frontend.sh <<'EOF'
+#!/bin/bash
+
+set -euxo pipefail
+
+cd /opt/inngrid/frontend
+
+aws s3 cp \
+s3://${frontend_artifacts_bucket}/frontend-standalone.tar.gz \
+frontend-standalone.tar.gz
+
+rm -rf \
+.next \
+node_modules \
+server.js \
+package.json
+
+# Extract new deployment
+tar -xzf frontend-standalone.tar.gz
+
+pm2 restart inngrid-frontend || \
+pm2 start server.js --name inngrid-frontend
+
+pm2 save
+EOF
+
+chmod +x /opt/inngrid/scripts/deploy-frontend.sh
+
+nginx -t
+
+systemctl reload nginx
 
 systemctl is-active nginx
 

@@ -18,6 +18,10 @@ variable "frontend_target_group_arn" {
   type = string
 }
 
+variable "frontend_artifacts_bucket_arn" {
+  type = string
+}
+
 variable "instance_type" {
   type    = string
   default = "t3.micro"

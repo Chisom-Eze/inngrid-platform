@@ -1,0 +1,70 @@
+name: InnGrid Frontend Deployment
+
+permissions:
+  id-token: write
+  contents: read
+  
+env:
+  ARTIFACT_NAME: frontend-standalone.tar.gz
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-deploy.yml'
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: dev
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Display Node Version
+        run: node --version
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Create deployment artifact
+        working-directory: frontend
+        run: |
+          tar -czf ${{ env.ARTIFACT_NAME }} \
+            .next/standalone \
+            .next/static
+
+      - name: Upload latest artifact
+        run: |
+          aws s3 cp \
+            frontend/${{ env.ARTIFACT_NAME }} \
+            s3://${{ vars.FRONTEND_ARTIFACTS_BUCKET }}/${{ env.ARTIFACT_NAME }}
+
+      - name: Upload versioned artifact
+        run: |
+          aws s3 cp \
+            frontend/${{ env.ARTIFACT_NAME }} \
+            s3://${{ vars.FRONTEND_ARTIFACTS_BUCKET }}/frontend-${{ github.sha }}.tar.gz

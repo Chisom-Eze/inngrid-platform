@@ -34,3 +34,14 @@ Thumbs.db
 coverage/
 dist/
 build/
+
+# Deployment artifacts
+*.tar.gz
+.zip
+
+# Session Manager installer
+session-manager-plugin-installation.log 
+session-manager-plugin.deb
+
+# Local packages
+*.deb
