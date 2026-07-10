@@ -18,7 +18,7 @@ variable "frontend_target_group_arn" {
   type = string
 }
 
-variable "frontend_artifacts_bucket_arn" {
+variable "frontend_artifacts_bucket_name" {
   type = string
 }
 

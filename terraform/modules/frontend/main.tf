@@ -23,13 +23,13 @@ locals {
     "${path.module}/user-data.sh.tpl",
     {
       environment     = var.environment
-      frontend_artifacts_bucket = var.frontend_artifacts_bucket_arn
+      frontend_artifacts_bucket = var.frontend_artifacts_bucket_name
     }
   )
 }
 
 resource "aws_launch_template" "frontend" {
-  name_prefix = "${var.project_name}-${var.environment}-frontend-"
+  name_prefix = "${var.project_name}-${var.environment}-frontend"
 
   image_id = data.aws_ami.ubuntu.id
 
