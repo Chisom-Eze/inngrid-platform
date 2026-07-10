@@ -3,7 +3,7 @@ name: InnGrid Frontend Deployment
 permissions:
   id-token: write
   contents: read
-  
+
 env:
   ARTIFACT_NAME: frontend-standalone.tar.gz
 
@@ -26,14 +26,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Display Node Version
-        run: node --version
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Validate deployment configuration
+        run: |
+          test -n "${{ vars.FRONTEND_ARTIFACTS_BUCKET }}"
+          test -n "${{ vars.DEPLOY_ENVIRONMENT }}"
 
       - name: Set Up Node.js
         uses: actions/setup-node@v5
@@ -41,6 +43,9 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
+
+      - name: Display Node Version
+        run: node --version
 
       - name: Install dependencies
         working-directory: frontend
@@ -57,14 +62,57 @@ jobs:
             .next/standalone \
             .next/static
 
-      - name: Upload latest artifact
+      - name: Generate deployment artifact name
         run: |
-          aws s3 cp \
-            frontend/${{ env.ARTIFACT_NAME }} \
-            s3://${{ vars.FRONTEND_ARTIFACTS_BUCKET }}/${{ env.ARTIFACT_NAME }}
+          echo "DEPLOY_ARTIFACT=frontend-${GITHUB_SHA}-${GITHUB_RUN_NUMBER}.tar.gz" >> $GITHUB_ENV
 
-      - name: Upload versioned artifact
+      - name: Upload deployment artifact
         run: |
           aws s3 cp \
             frontend/${{ env.ARTIFACT_NAME }} \
-            s3://${{ vars.FRONTEND_ARTIFACTS_BUCKET }}/frontend-${{ github.sha }}.tar.gz
+            s3://${{ vars.FRONTEND_ARTIFACTS_BUCKET }}/${{ env.DEPLOY_ARTIFACT }}
+
+      - name: Deploy frontend via SSM
+        id: deploy
+        run: |
+          COMMAND_ID=$(aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets \
+              "Key=tag:Project,Values=InnGrid" \
+              "Key=tag:Environment,Values=${{ vars.DEPLOY_ENVIRONMENT }}" \
+            --parameters \
+              commands="/opt/inngrid/scripts/deploy-frontend.sh ${{ env.DEPLOY_ARTIFACT }}" \
+            --query "Command.CommandId" \
+            --output text)
+
+          echo "Deployment command: $COMMAND_ID"
+          echo "COMMAND_ID=$COMMAND_ID" >> $GITHUB_ENV
+
+      - name: Wait for deployment 
+        run: |
+          aws ssm wait command-executed \
+            --command-id ${{ env.COMMAND_ID }} \
+            --instance-id $(aws ec2 describe-instances \
+              --filters \
+                "Name=tag:Project,Values=InnGrid" \
+                "Name=tag:Environment,Values=${{ vars.DEPLOY_ENVIRONMENT }}" \
+                "Name=instance-state-name,Values=running" \
+              --query "Reservations[0].Instances[0].InstanceId" \
+              --output text)
+
+      - name: Verify frontend 
+        run: |
+          for i in {1..10}; do
+          if curl --fail https://app.chisomeze.online; then
+            exit 0
+          fi
+          
+          echo "Waiting for frontend..."
+
+
+          sleep 10
+          done
+
+
+          exit 1
+          

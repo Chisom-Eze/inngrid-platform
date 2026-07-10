@@ -45,6 +45,10 @@ mkdir -p /opt/inngrid/frontend
 
 chown -R ssm-user:ssm-user /opt/inngrid
 
+cat >/etc/inngrid.env <<'EOF'
+FRONTEND_ARTIFACTS_BUCKET=${frontend_artifacts_bucket}
+EOF
+
 systemctl enable nginx
 systemctl start nginx
 

@@ -85,7 +85,7 @@ module "frontend" {
 
   private_subnet_ids = module.networking.private_subnet_ids
 
-  frontend_artifacts_bucket_arn = module.artifacts.bucket_arn
+  frontend_artifacts_bucket_name = module.artifacts.bucket_name
 
   instance_type = var.instance_type
 
