@@ -82,7 +82,7 @@ dpkg -i amazon-cloudwatch-agent.deb || apt-get install -f -y
 mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
 
 
-cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<EOF
+cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<'EOF'
 {
   "agent": {
     "metrics_collection_interval": 60,
