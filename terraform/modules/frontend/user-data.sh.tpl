@@ -162,6 +162,18 @@ server {
 
     server_name _;
 
+    #
+    # Infrastructure health check
+    #
+    location = /health {
+        access_log off;
+        default_type text/plain;
+        return 200 "healthy\n";
+    }
+
+    #
+    # Frontend application
+    #
     location / {
         proxy_pass http://127.0.0.1:3000;
 

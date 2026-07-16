@@ -42,3 +42,8 @@ variable "certificate_arn" {
 variable "alb_log_bucket_name" {
   type = string
 }
+
+variable "frontend_health_check_path" {
+  type    = string
+  default = "/health"
+}
