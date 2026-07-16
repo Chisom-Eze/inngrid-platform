@@ -2,10 +2,21 @@
 
 set -euxo pipefail
 
+exec > >(tee /var/log/inngrid-bootstrap.log | logger -t inngrid-bootstrap) 2>&1
+
 
 apt-get update -y
 
 apt-get install -y nginx wget curl unzip jq
+
+# Create InnGrid application user
+#
+if ! id -u inngrid >/dev/null 2>&1; then
+    useradd \
+        --create-home \
+        --shell /bin/bash \
+        inngrid
+fi
 
 mkdir -p /opt/inngrid/scripts
 mkdir -p /opt/inngrid/logs
@@ -24,7 +35,7 @@ apt-get install -y nodejs
 #
 npm install -g pm2
 
-pm2 startup systemd -u ssm-user --hp /home/ssm-user
+pm2 startup systemd -u inngrid --hp /home/inngrid
 
 #
 # Install AWS CLI v2
@@ -43,7 +54,8 @@ unzip -q awscliv2.zip
 #
 mkdir -p /opt/inngrid/frontend
 
-chown -R ssm-user:ssm-user /opt/inngrid
+chown -R inngrid:inngrid /opt/inngrid
+chmod -R 755 /opt/inngrid
 
 cat >/etc/inngrid.env <<'EOF'
 FRONTEND_ARTIFACTS_BUCKET=${frontend_artifacts_bucket}
@@ -188,10 +200,12 @@ package.json
 # Extract new deployment
 tar -xzf frontend-standalone.tar.gz
 
-pm2 restart inngrid-frontend || \
-pm2 start server.js --name inngrid-frontend
+chown -R inngrid:inngrid .
 
-pm2 save
+sudo -u inngrid pm2 restart inngrid-frontend || \
+sudo -u inngrid pm2 start server.js --name inngrid-frontend
+
+sudo -u inngrid pm2 save
 EOF
 
 chmod +x /opt/inngrid/scripts/deploy-frontend.sh
