@@ -59,6 +59,7 @@ chmod -R 755 /opt/inngrid
 
 cat >/etc/inngrid.env <<EOF
 FRONTEND_ARTIFACTS_BUCKET=${frontend_artifacts_bucket}
+FRONTEND_ARTIFACTS_NAME=${frontend_artifacts_name}
 EOF
 
 systemctl enable nginx
