@@ -39,7 +39,7 @@ resource "aws_lb_target_group" "frontend" {
   health_check {
     enabled = true
 
-    path = "/"
+    path = var.frontend_health_check_path
 
     protocol = "HTTP"
 
