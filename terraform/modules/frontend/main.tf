@@ -22,7 +22,7 @@ locals {
   user_data = templatefile(
     "${path.module}/user-data.sh.tpl",
     {
-      environment     = var.environment
+      environment               = var.environment
       frontend_artifacts_bucket = var.frontend_artifacts_bucket_name
     }
   )

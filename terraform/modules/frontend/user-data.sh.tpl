@@ -59,7 +59,6 @@ chmod -R 755 /opt/inngrid
 
 cat >/etc/inngrid.env <<EOF
 FRONTEND_ARTIFACTS_BUCKET=${frontend_artifacts_bucket}
-FRONTEND_ARTIFACTS_NAME=${frontend_artifacts_name}
 EOF
 
 systemctl enable nginx
@@ -210,7 +209,7 @@ ARTIFACT_NAME="$1"
 cd /opt/inngrid/frontend
 
 aws s3 cp \
-  "s3://${FRONTEND_ARTIFACTS_BUCKET}/${ARTIFACT_NAME}" \
+  "s3://$${FRONTEND_ARTIFACTS_BUCKET}/$${ARTIFACT_NAME}" \
   frontend-standalone.tar.gz
 
 rm -rf \
