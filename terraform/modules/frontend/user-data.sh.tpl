@@ -57,7 +57,7 @@ mkdir -p /opt/inngrid/frontend
 chown -R inngrid:inngrid /opt/inngrid
 chmod -R 755 /opt/inngrid
 
-cat >/etc/inngrid.env <<'EOF'
+cat >/etc/inngrid.env <<EOF
 FRONTEND_ARTIFACTS_BUCKET=${frontend_artifacts_bucket}
 EOF
 
@@ -197,11 +197,20 @@ cat >/opt/inngrid/scripts/deploy-frontend.sh <<'EOF'
 
 set -euxo pipefail
 
+source /etc/inngrid.env
+
+if [ $# -ne 1 ]; then
+    echo "Usage: deploy-frontend.sh <artifact-name>"
+    exit 1
+fi
+
+ARTIFACT_NAME="$1"
+
 cd /opt/inngrid/frontend
 
 aws s3 cp \
-s3://${frontend_artifacts_bucket}/frontend-standalone.tar.gz \
-frontend-standalone.tar.gz
+  "s3://$${FRONTEND_ARTIFACTS_BUCKET}/$${ARTIFACT_NAME}" \
+  frontend-standalone.tar.gz
 
 rm -rf \
 .next \
