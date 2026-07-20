@@ -223,8 +223,13 @@ tar -xzf frontend-standalone.tar.gz
 
 chown -R inngrid:inngrid .
 
-sudo -u inngrid pm2 restart inngrid-frontend || \
-sudo -u inngrid pm2 start server.js --name inngrid-frontend
+cd /opt/inngrid/frontend/.next/standalone
+
+if sudo -u inngrid pm2 describe inngrid-frontend >/dev/null 2>&1; then
+    sudo -u inngrid pm2 restart inngrid-frontend --update-env
+else
+    sudo -u inngrid pm2 start server.js --name inngrid-frontend
+fi
 
 sudo -u inngrid pm2 save
 EOF
