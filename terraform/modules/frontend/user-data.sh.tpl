@@ -221,6 +221,10 @@ package.json
 # Extract new deployment
 tar -xzf frontend-standalone.tar.gz
 
+# Make the static assets available to the standalone runtime
+mkdir -p .next/standalone/.next
+cp -a .next/static .next/standalone/.next/
+
 chown -R inngrid:inngrid .
 
 cd /opt/inngrid/frontend/.next/standalone
@@ -232,7 +236,6 @@ else
 fi
 
 sudo -u inngrid pm2 save
-EOF
 
 chmod +x /opt/inngrid/scripts/deploy-frontend.sh
 
