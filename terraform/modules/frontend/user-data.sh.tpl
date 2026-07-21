@@ -192,7 +192,7 @@ server {
 }
 EOF
 
-cat >/opt/inngrid/scripts/deploy-frontend.sh <<'EOF'
+cat >/opt/inngrid/scripts/deploy-frontend.sh <<EOF
 #!/bin/bash
 
 set -euxo pipefail
@@ -236,6 +236,7 @@ else
 fi
 
 sudo -u inngrid pm2 save
+EOF
 
 chmod +x /opt/inngrid/scripts/deploy-frontend.sh
 
