@@ -57,8 +57,8 @@ mkdir -p /opt/inngrid/frontend
 chown -R inngrid:inngrid /opt/inngrid
 chmod -R 755 /opt/inngrid
 
-cat >/etc/inngrid.env <<'EOF'
-FRONTEND_ARTIFACTS_BUCKET=$${frontend_artifacts_bucket}
+cat >/etc/inngrid.env <<EOF
+FRONTEND_ARTIFACTS_BUCKET=${frontend_artifacts_bucket}
 EOF
 
 systemctl enable nginx
@@ -209,7 +209,7 @@ ARTIFACT_NAME="$1"
 cd /opt/inngrid/frontend
 
 aws s3 cp \
-  "s3://$${FRONTEND_ARTIFACTS_BUCKET}/$${ARTIFACT_NAME}" \
+  "s3://${FRONTEND_ARTIFACTS_BUCKET}/${ARTIFACT_NAME}" \
   frontend-standalone.tar.gz
 
   test -f frontend-standalone.tar.gz
@@ -236,11 +236,11 @@ if sudo -u inngrid pm2 describe inngrid-frontend >/dev/null 2>&1; then
     sudo -u inngrid pm2 restart inngrid-frontend --update-env
 else
     sudo -u inngrid pm2 start server.js --name inngrid-frontend
+fi
 
 sleep 5
 
 curl --fail http://127.0.0.1:3000/ >/dev/null
-fi
 
 sudo -u inngrid pm2 save
 
