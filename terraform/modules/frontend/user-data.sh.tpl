@@ -242,6 +242,10 @@ sleep 5
 curl --fail http://127.0.0.1:3000/ >/dev/null
 fi
 
+sleep 5
+
+curl --fail http://127.0.0.1:3000/ >/dev/null
+
 sudo -u inngrid pm2 save
 
 chmod +x /opt/inngrid/scripts/deploy-frontend.sh
