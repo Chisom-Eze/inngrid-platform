@@ -57,8 +57,8 @@ mkdir -p /opt/inngrid/frontend
 chown -R inngrid:inngrid /opt/inngrid
 chmod -R 755 /opt/inngrid
 
-cat >/etc/inngrid.env <<EOF
-FRONTEND_ARTIFACTS_BUCKET=${frontend_artifacts_bucket}
+cat >/etc/inngrid.env <<'EOF'
+FRONTEND_ARTIFACTS_BUCKET=$${frontend_artifacts_bucket}
 EOF
 
 systemctl enable nginx
@@ -192,7 +192,7 @@ server {
 }
 EOF
 
-cat >/opt/inngrid/scripts/deploy-frontend.sh <<EOF
+cat >/opt/inngrid/scripts/deploy-frontend.sh <<'EOF'
 #!/bin/bash
 
 set -euxo pipefail
@@ -212,6 +212,8 @@ aws s3 cp \
   "s3://$${FRONTEND_ARTIFACTS_BUCKET}/$${ARTIFACT_NAME}" \
   frontend-standalone.tar.gz
 
+  test -f frontend-standalone.tar.gz
+
 rm -rf \
 .next \
 node_modules \
@@ -223,6 +225,7 @@ tar -xzf frontend-standalone.tar.gz
 
 # Make the static assets available to the standalone runtime
 mkdir -p .next/standalone/.next
+rm -rf .next/standalone/.next/static
 cp -a .next/static .next/standalone/.next/
 
 chown -R inngrid:inngrid .
@@ -233,6 +236,10 @@ if sudo -u inngrid pm2 describe inngrid-frontend >/dev/null 2>&1; then
     sudo -u inngrid pm2 restart inngrid-frontend --update-env
 else
     sudo -u inngrid pm2 start server.js --name inngrid-frontend
+
+sleep 5
+
+curl --fail http://127.0.0.1:3000/ >/dev/null
 fi
 
 sudo -u inngrid pm2 save
