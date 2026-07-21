@@ -209,7 +209,7 @@ ARTIFACT_NAME="$1"
 cd /opt/inngrid/frontend
 
 aws s3 cp \
-  "s3://${FRONTEND_ARTIFACTS_BUCKET}/${ARTIFACT_NAME}" \
+  "s3://$${FRONTEND_ARTIFACTS_BUCKET}/$${ARTIFACT_NAME}" \
   frontend-standalone.tar.gz
 
   test -f frontend-standalone.tar.gz
