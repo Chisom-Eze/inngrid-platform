@@ -1,8 +1,10 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -Eeuxo pipefail
 
-exec > >(tee /var/log/inngrid-bootstrap.log | logger -t inngrid-bootstrap) 2>&1
+exec > >(tee -a /var/log/inngrid-bootstrap.log | logger -t inngrid-bootstrap) 2>&1
+
+trap 'echo "ERROR: bootstrap failed at line $LINENO with exit code $?"' ERR
 
 
 apt-get update -y
@@ -27,6 +29,7 @@ mkdir -p /opt/inngrid/frontend
 # Install Node.js 22
 #
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+
 
 apt-get install -y nodejs
 
@@ -247,6 +250,7 @@ sleep 5
 curl --fail http://127.0.0.1:3000/ >/dev/null
 
 sudo -u inngrid pm2 save
+EOF
 
 chmod +x /opt/inngrid/scripts/deploy-frontend.sh
 
